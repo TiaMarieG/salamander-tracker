@@ -1,23 +1,27 @@
-import Test from '@/components/Test.jsx';
-import Link from 'next/link';
+"use client";
+import { useEffect, useState } from "react";
+import VideoCard from "@/components/VideoCard";
 
-// Created fake videos for the user to select on and test the preview dynamic route
-// Also tested the Test component to see that it can be imported into the route
 export default function VideosPage() {
+   const [videos, setVideos] = useState([]);
 
-   const sampleVideos = ['newt1.mp4', 'newt2.mp4', 'newt3.mp4'];
+   useEffect(() => {
+      fetch("http://localhost:8080/api/videos")
+         .then((res) => res.json())
+         .then((data) => setVideos(data))
+         .catch((err) => console.error("Failed to load videos:", err));
+   }, []);
 
-   return(
+   return (
       <div>
-         List of Videos
-         <ul>
-            {sampleVideos.map(file => (
-               <li key={file}>
-                  <Link href={`/videos/preview/${file}`}>{file}</Link>
-               </li>
+         <h2>
+            Select a Salamander Video
+         </h2>
+         <div>
+            {videos.map((video) => (
+               <VideoCard key={video} video={video} />
             ))}
-         </ul>
-         <Test />
+         </div>
       </div>
-   )
+   );
 }
