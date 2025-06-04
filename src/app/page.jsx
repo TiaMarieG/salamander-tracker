@@ -1,9 +1,3 @@
-//Creating a home page 
-
-export default function Home() {
-  return (
-    <div>
-      Welcome to the Home Page!
-    </div>
-  );
+export default function HomePage() {
+   return <h1>Welcome to Salamander Tracker</h1>;
 }
