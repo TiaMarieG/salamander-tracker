@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 
 // Functional React component that allows users to click on a thumbnail image
 // and extract the color of the pixel they clicked on.
-export default function ColorPickerCanvas({ thumbnailSrc, onColorPicked }) {
+export default function ColorPicker({ thumbnailSrc, onColorPicked }) {
    // Reference to the <canvas> element
    const canvasRef = useRef(null);
 
@@ -23,9 +23,9 @@ export default function ColorPickerCanvas({ thumbnailSrc, onColorPicked }) {
 
       // Wait for the image to fully load before drawing it to the canvas
       img.onload = () => {
-         canvas.width = img.width;         // Match canvas size to image
+         canvas.width = img.width; // Match canvas size to image
          canvas.height = img.height;
-         ctx.drawImage(img, 0, 0);         // Draw image onto canvas at (0, 0)
+         ctx.drawImage(img, 0, 0); // Draw image onto canvas at (0, 0)
       };
    }, [thumbnailSrc]);
 
@@ -44,31 +44,22 @@ export default function ColorPickerCanvas({ thumbnailSrc, onColorPicked }) {
       const rgb = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
 
       // Save and propagate the selected color
-      setPickedColor(rgb);       // Update state (for UI display)
-      onColorPicked(rgb);        // Pass the selected color to the parent
+      setPickedColor(rgb); // Update state (for UI display)
+      onColorPicked(rgb); // Pass the selected color to the parent
    };
 
    return (
       <div>
-         {/* Visible canvas that user interacts with */}
          <canvas
             ref={canvasRef}
             onClick={handleClick}
             style={{ cursor: "crosshair" }}
          />
-
-         {/* Hidden <img> used only to draw the image onto the canvas */}
-         <img
-            ref={imgRef}
-            src={thumbnailSrc}
-            alt="Video Thumbnail"
-            hidden
-         />
-
-         {/* Display selected color, if any */}
+         <img ref={imgRef} src={thumbnailSrc} alt="Video Thumbnail" hidden />
          {pickedColor && (
-            <p className="mt-2">
-               Picked Color: <span style={{ color: pickedColor }}>{pickedColor}</span>
+            <p>
+               Picked Color:{" "}
+               <span style={{ color: pickedColor }}>{pickedColor}</span>
             </p>
          )}
       </div>
