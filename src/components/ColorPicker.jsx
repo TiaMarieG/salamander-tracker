@@ -1,51 +1,44 @@
-"use client"; // Ensures this component runs on the client side in Next.js
+"use client";
 
 import { useRef, useState, useEffect } from "react";
 
-// Functional React component that allows users to click on a thumbnail image
-// and extract the color of the pixel they clicked on.
 export default function ColorPicker({ thumbnailSrc, onColorPicked }) {
-   // Reference to the <canvas> element
    const canvasRef = useRef(null);
-
-   // Reference to the <img> element (used to load the thumbnail)
    const imgRef = useRef(null);
-
-   // Stores the most recently selected color (as an RGB string)
    const [pickedColor, setPickedColor] = useState(null);
 
-   // After the component mounts (or when the thumbnailSrc changes),
-   // draw the image onto the canvas so we can access pixel data.
+   // Desired canvas display size
+   const CANVAS_WIDTH = 320;
+   const CANVAS_HEIGHT = 180;
+
    useEffect(() => {
       const img = imgRef.current;
       const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-      // Wait for the image to fully load before drawing it to the canvas
       img.onload = () => {
-         canvas.width = img.width; // Match canvas size to image
-         canvas.height = img.height;
-         ctx.drawImage(img, 0, 0); // Draw image onto canvas at (0, 0)
+         // Set fixed canvas size
+         canvas.width = CANVAS_WIDTH;
+         canvas.height = CANVAS_HEIGHT;
+
+         // Draw image scaled to fit the canvas
+         ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       };
    }, [thumbnailSrc]);
 
-   // When the user clicks on the canvas, extract the color at the clicked pixel
    const handleClick = (e) => {
       const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-
-      // Get mouse position relative to the canvas
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
       const rect = canvas.getBoundingClientRect();
+
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      // Get the color data at the clicked pixel (returns [r, g, b, a])
       const pixel = ctx.getImageData(x, y, 1, 1).data;
       const rgb = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
 
-      // Save and propagate the selected color
-      setPickedColor(rgb); // Update state (for UI display)
-      onColorPicked(rgb); // Pass the selected color to the parent
+      setPickedColor(rgb);
+      onColorPicked(rgb);
    };
 
    return (
@@ -53,9 +46,16 @@ export default function ColorPicker({ thumbnailSrc, onColorPicked }) {
          <canvas
             ref={canvasRef}
             onClick={handleClick}
-            style={{ cursor: "crosshair" }}
+            width={CANVAS_WIDTH}
+            height={CANVAS_HEIGHT}
+            style={{ cursor: "crosshair", border: "1px solid #ccc" }}
          />
-         <img ref={imgRef} src={thumbnailSrc} alt="Video Thumbnail" hidden />
+         <img
+            ref={imgRef}
+            src={thumbnailSrc}
+            alt="Video Thumbnail"
+            style={{ display: "none" }}
+         />
          {pickedColor && (
             <p>
                Picked Color:{" "}
