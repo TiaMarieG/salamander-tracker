@@ -11,38 +11,36 @@ export default function VideoCard({ video }) {
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-      const formData = new FormData();
-      formData.append("file", video);
       const [r, g, b] = color.match(/\d+/g);
-      formData.append("color", `${r},${g},${b}`);
-      formData.append("threshold", threshold);
+
+      const payload = {
+         file: video,
+         color: `${r},${g},${b}`,
+         threshold: parseInt(threshold)
+      };
 
       const res = await fetch("http://localhost:8080/process", {
          method: "POST",
-         body: formData,
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify(payload)
       });
 
       const data = await res.json();
-      router.push(`/videos/preview/${data.id}`);
+      router.push(`/videos/preview/${data.jobId}`);
    };
 
    return (
       <form
-         onSubmit={handleSubmit}
-         
-      >
+         onSubmit={handleSubmit}>
          <h3>{video}</h3>
          <ColorPicker
             thumbnailSrc={`http://localhost:8080/thumbnail/${video}.jpg`}
             onColorPicked={setColor}
          />
-         <Threshold
-            value={threshold}
-            onChange={(e) => setThreshold(e.target.value)}
-         />
-         <button type="submit">
-            Submit
-         </button>
+         <Threshold value={threshold} onChange={e => setThreshold(e.target.value)} />
+         <button type="submit">Submit</button>
       </form>
    );
 }
