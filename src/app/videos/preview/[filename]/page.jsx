@@ -1,9 +1,11 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+
 import ColorPicker from "@/components/ColorPicker";
 import ThresholdInput from "@/components/Threshold";
-import { useParams } from "next/navigation";
+import GenerateCsvButton from "@/components/GenerateCsvButton";
 
 export default function FileDetail() {
    const { filename } = useParams();
@@ -14,7 +16,7 @@ export default function FileDetail() {
 
    const binarizedCanvasRef = useRef(null);
 
-   // Load thumbnail image
+   // Fetch thumbnail on load
    useEffect(() => {
       if (!filename) return;
 
@@ -43,7 +45,7 @@ export default function FileDetail() {
       return () => controller.abort();
    }, [filename]);
 
-   // Binarize image to second canvas
+   // Binarize preview
    useEffect(() => {
       if (
          !thumbnail ||
@@ -81,16 +83,8 @@ export default function FileDetail() {
                   Math.pow(b - color.b, 2)
             );
 
-            if (dist <= threshold) {
-               data[i] = 255;
-               data[i + 1] = 255;
-               data[i + 2] = 255;
-            } else {
-               data[i] = 0;
-               data[i + 1] = 0;
-               data[i + 2] = 0;
-            }
-
+            const value = dist <= threshold ? 255 : 0;
+            data[i] = data[i + 1] = data[i + 2] = value;
             data[i + 3] = 255;
          }
 
@@ -118,6 +112,14 @@ export default function FileDetail() {
          {message && <p>{message}</p>}
          {!color && thumbnail && (
             <p>🎯 Click the image above to select a color</p>
+         )}
+
+         {color && (
+            <GenerateCsvButton
+               filename={filename}
+               color={color}
+               threshold={threshold}
+            />
          )}
       </div>
    );
