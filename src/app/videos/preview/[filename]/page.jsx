@@ -47,6 +47,8 @@ export default function FileDetail() {
    useEffect(() => {
       if (!filename || !color || isNaN(threshold)) return;
 
+      const imageFilename = filename.replace(/\.[^/.]+$/, ".jpg"); // force .jpg
+
       const query = new URLSearchParams({
          filename,
          r: color.r,
@@ -81,7 +83,10 @@ export default function FileDetail() {
             </>
          )}
 
-         <ColorPicker thumbnailSrc={thumbnail} onColorPicked={setColor} />
+         <ColorPicker 
+            thumbnailSrc={thumbnail}
+            onColorPicked={setColor}
+            />
          <ThresholdInput
             value={threshold}
             onChange={(e) => setThreshold(Number(e.target.value))}
