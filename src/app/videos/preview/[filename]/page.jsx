@@ -47,14 +47,14 @@ export default function FileDetail() {
    useEffect(() => {
       if (!filename || !color || isNaN(threshold)) return;
 
-      const imageFilename = filename.replace(/\.[^/.]+$/, ".jpg"); // force .jpg
-
+      const base = filename.replace(/\.[^/.]+$/, "");
       const query = new URLSearchParams({
-         filename,
+         filename: base,
          r: color.r,
          g: color.g,
          b: color.b,
          threshold,
+         ts: Date.now().toString(), // prevent caching
       });
 
       fetch(`http://localhost:8080/api/binarize-thumbnail?${query}`)
@@ -62,9 +62,12 @@ export default function FileDetail() {
             if (!res.ok) throw new Error("Binarization failed");
             return res.blob();
          })
-         .then((blob) => setBinarizedUrl(URL.createObjectURL(blob)))
+         .then((blob) => {
+            if (binarizedUrl) URL.revokeObjectURL(binarizedUrl); // clean up old blob
+            setBinarizedUrl(URL.createObjectURL(blob));
+         })
          .catch((err) => {
-            console.error(err);
+            console.error("Binarization error:", err);
          });
    }, [color, threshold, filename]);
 
@@ -83,10 +86,7 @@ export default function FileDetail() {
             </>
          )}
 
-         <ColorPicker 
-            thumbnailSrc={thumbnail}
-            onColorPicked={setColor}
-            />
+         <ColorPicker thumbnailSrc={thumbnail} onColorPicked={setColor} />
          <ThresholdInput
             value={threshold}
             onChange={(e) => setThreshold(Number(e.target.value))}
