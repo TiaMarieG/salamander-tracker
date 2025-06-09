@@ -6,61 +6,68 @@ import ThresholdInput from "@/components/Threshold";
 import { useParams } from "next/navigation";
 
 export default function FileDetail() {
-   const params = useParams();
-   const filename = params.filename;
-
+   const { filename } = useParams();
    const [color, setColor] = useState(null);
    const [threshold, setThreshold] = useState(128);
    const [thumbnail, setThumbnail] = useState(null);
    const [binarizedUrl, setBinarizedUrl] = useState(null);
    const [message, setMessage] = useState("");
 
-   // Load the thumbnail
+   // Load the original thumbnail
    useEffect(() => {
       if (!filename) return;
 
-      setThumbnail(null); // reset while loading
-      fetch(`http://localhost:8080/thumbnail/${filename}`)
-         .then((res) => res.blob())
+      const controller = new AbortController();
+      setMessage("🔄 Loading thumbnail...");
+      setColor(null);
+      setBinarizedUrl(null);
+
+      fetch(`http://localhost:8080/thumbnail/${filename}`, {
+         signal: controller.signal,
+      })
+         .then((res) => {
+            if (!res.ok) throw new Error("Thumbnail fetch failed");
+            return res.blob();
+         })
          .then((blob) => {
-            const imageUrl = URL.createObjectURL(blob);
-            setThumbnail(imageUrl);
+            setThumbnail(URL.createObjectURL(blob));
+            setMessage("");
          })
          .catch((err) => {
-            console.error("Failed to fetch thumbnail:", err);
-            setMessage("❌ Failed to load thumbnail.");
+            if (err.name !== "AbortError") {
+               console.error("Failed to load thumbnail:", err);
+               setMessage("❌ Failed to load thumbnail.");
+            }
          });
 
-      // Reset binarized image if file changes
-      setBinarizedUrl(null);
-      setMessage("");
-
+      return () => controller.abort();
    }, [filename]);
 
-   // Load binarized version when color + threshold are set
+   // Binarize whenever color or threshold changes
    useEffect(() => {
-      if (!color || !threshold || !filename) return;
+      if (!filename || !color || isNaN(threshold)) return;
 
       const { r, g, b } = color;
       const base = filename.replace(/\.[^/.]+$/, "");
+      setMessage("⚙️ Binarizing image...");
+
       fetch(
-         `http://localhost:8080/api/binarize?filename=${base}&r=${r}&g=${g}&b=${b}&threshold=${threshold}`
+         `http://localhost:8080/api/binarize-thumbnail?filename=${base}&r=${r}&g=${g}&b=${b}&threshold=${threshold}`
       )
          .then((res) => {
             if (!res.ok) throw new Error("Binarization failed");
             return res.blob();
          })
          .then((blob) => {
-            const binUrl = URL.createObjectURL(blob);
-            setBinarizedUrl(binUrl);
+            setBinarizedUrl(URL.createObjectURL(blob));
             setMessage("");
          })
          .catch((err) => {
-            console.error("Binarize error:", err);
+            console.error("Binarization error:", err);
             setBinarizedUrl(null);
-            setMessage("❌ Failed to binarize thumbnail.");
+            setMessage("❌ Failed to binarize image.");
          });
-   }, [color, threshold, filename]);
+   }, [filename, color, threshold]);
 
    return (
       <div>
@@ -96,7 +103,7 @@ export default function FileDetail() {
                   />
                </>
             ) : (
-               color && <p>Loading binarized image...</p>
+               color && <p>⏳ Waiting for binarized image...</p>
             )}
          </div>
       </div>
