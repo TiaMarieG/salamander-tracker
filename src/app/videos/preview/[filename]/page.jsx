@@ -12,7 +12,9 @@ export default function FileDetail() {
    const [thumbnail, setThumbnail] = useState(null);
    const [message, setMessage] = useState("");
 
-   // Load thumbnail
+   const binarizedCanvasRef = useRef(null);
+
+   // Load thumbnail image
    useEffect(() => {
       if (!filename) return;
 
@@ -41,23 +43,82 @@ export default function FileDetail() {
       return () => controller.abort();
    }, [filename]);
 
+   // Binarize image to second canvas
+   useEffect(() => {
+      if (
+         !thumbnail ||
+         !color ||
+         isNaN(threshold) ||
+         !binarizedCanvasRef.current
+      )
+         return;
+
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = thumbnail;
+
+      img.onload = () => {
+         const canvas = binarizedCanvasRef.current;
+         const ctx = canvas.getContext("2d");
+         const width = img.naturalWidth * 0.5;
+         const height = img.naturalHeight * 0.5;
+
+         canvas.width = width;
+         canvas.height = height;
+         ctx.drawImage(img, 0, 0, width, height);
+
+         const imageData = ctx.getImageData(0, 0, width, height);
+         const data = imageData.data;
+
+         for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+
+            const dist = Math.sqrt(
+               Math.pow(r - color.r, 2) +
+                  Math.pow(g - color.g, 2) +
+                  Math.pow(b - color.b, 2)
+            );
+
+            if (dist <= threshold) {
+               data[i] = 255;
+               data[i + 1] = 255;
+               data[i + 2] = 255;
+            } else {
+               data[i] = 0;
+               data[i + 1] = 0;
+               data[i + 2] = 0;
+            }
+
+            data[i + 3] = 255;
+         }
+
+         ctx.putImageData(imageData, 0, 0);
+      };
+   }, [thumbnail, color, threshold]);
+
    return (
       <div>
          <h1>Preview: {filename}</h1>
 
-         <ColorPicker
-            thumbnailSrc={thumbnail}
-            onColorPicked={setColor}
-            threshold={threshold}
-         />
+         <ColorPicker thumbnailSrc={thumbnail} onColorPicked={setColor} />
 
          <ThresholdInput
             value={threshold}
             onChange={(e) => setThreshold(Number(e.target.value))}
          />
 
+         <h3>Binarized Preview</h3>
+         <canvas
+            ref={binarizedCanvasRef}
+            style={{ border: "1px solid #888", maxWidth: "100%" }}
+         />
+
          {message && <p>{message}</p>}
-         {!color && thumbnail && <p>🎯 Click the canvas to select a color</p>}
+         {!color && thumbnail && (
+            <p>🎯 Click the image above to select a color</p>
+         )}
       </div>
    );
 }
