@@ -47,27 +47,24 @@ export default function FileDetail() {
    useEffect(() => {
       if (!filename || !color || isNaN(threshold)) return;
 
-      const { r, g, b } = color;
-      const base = filename.replace(/\.[^/.]+$/, "");
-      setMessage("⚙️ Binarizing image...");
+      const query = new URLSearchParams({
+         filename,
+         r: color.r,
+         g: color.g,
+         b: color.b,
+         threshold,
+      });
 
-      fetch(
-         `http://localhost:8080/api/binarize-thumbnail?filename=${base}&r=${r}&g=${g}&b=${b}&threshold=${threshold}`
-      )
+      fetch(`http://localhost:8080/api/binarize-thumbnail?${query}`)
          .then((res) => {
             if (!res.ok) throw new Error("Binarization failed");
             return res.blob();
          })
-         .then((blob) => {
-            setBinarizedUrl(URL.createObjectURL(blob));
-            setMessage("");
-         })
+         .then((blob) => setBinarizedUrl(URL.createObjectURL(blob)))
          .catch((err) => {
-            console.error("Binarization error:", err);
-            setBinarizedUrl(null);
-            setMessage("❌ Failed to binarize image.");
+            console.error(err);
          });
-   }, [filename, color, threshold]);
+   }, [color, threshold, filename]);
 
    return (
       <div>
