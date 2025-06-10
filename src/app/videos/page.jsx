@@ -1,6 +1,8 @@
-"use client";
+'use client';
+
 import React, { useEffect, useState } from "react";
 import VideoCard from "@/components/VideoCard";
+import { Typography, Grid, Alert, Container } from "@mui/material";
 
 export default function VideosPage() {
    const [videos, setVideos] = useState([]);
@@ -20,16 +22,20 @@ export default function VideosPage() {
    }, []);
 
    return (
-      <div>
-         <h1>Available Videos</h1>
-         {error && <p>{error}</p>}
-         <ul>
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+         <Typography variant="h4" gutterBottom>
+            Available Videos
+         </Typography>
+
+         {error && <Alert severity="error">{error}</Alert>}
+
+         <Grid container spacing={3}>
             {videos.map((video) => (
-               <li key={video}>
+               <Grid item xs={12} sm={6} md={4} key={video}>
                   <VideoCard filename={video} />
-               </li>
+               </Grid>
             ))}
-         </ul>
-      </div>
+         </Grid>
+      </Container>
    );
 }
