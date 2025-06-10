@@ -1,27 +1,20 @@
-'use client';
+"use client";
 
-import { useRef, useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useRef, useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 
-import {
-   Box,
-   Typography,
-   Paper,
-   Alert,
-   Container,
-   Grid,
-} from '@mui/material';
+import { Box, Typography, Paper, Alert, Container, Grid } from "@mui/material";
 
-import ColorPicker from '@/components/ColorPicker';
-import ThresholdInput from '@/components/Threshold';
-import GenerateCsvButton from '@/components/GenerateCsvButton';
+import ColorPicker from "@/components/ColorPicker";
+import ThresholdInput from "@/components/Threshold";
+import GenerateCsvButton from "@/components/GenerateCsvButton";
 
 export default function FileDetail() {
    const { filename } = useParams();
    const [color, setColor] = useState(null);
    const [threshold, setThreshold] = useState(128);
    const [thumbnail, setThumbnail] = useState(null);
-   const [message, setMessage] = useState('');
+   const [message, setMessage] = useState("");
 
    const binarizedCanvasRef = useRef(null);
 
@@ -30,24 +23,24 @@ export default function FileDetail() {
       if (!filename) return;
 
       const controller = new AbortController();
-      setMessage('🔄 Loading thumbnail...');
+      setMessage("🔄 Loading thumbnail...");
       setColor(null);
 
       fetch(`http://localhost:8080/thumbnail/${filename}`, {
          signal: controller.signal,
       })
          .then((res) => {
-            if (!res.ok) throw new Error('Thumbnail fetch failed');
+            if (!res.ok) throw new Error("Thumbnail fetch failed");
             return res.blob();
          })
          .then((blob) => {
             setThumbnail(URL.createObjectURL(blob));
-            setMessage('');
+            setMessage("");
          })
          .catch((err) => {
-            if (err.name !== 'AbortError') {
-               console.error('Failed to load thumbnail:', err);
-               setMessage('❌ Failed to load thumbnail.');
+            if (err.name !== "AbortError") {
+               console.error("Failed to load thumbnail:", err);
+               setMessage("❌ Failed to load thumbnail.");
             }
          });
 
@@ -65,12 +58,12 @@ export default function FileDetail() {
          return;
 
       const img = new Image();
-      img.crossOrigin = 'anonymous';
+      img.crossOrigin = "anonymous";
       img.src = thumbnail;
 
       img.onload = () => {
          const canvas = binarizedCanvasRef.current;
-         const ctx = canvas.getContext('2d');
+         const ctx = canvas.getContext("2d");
          const width = img.naturalWidth * 0.5;
          const height = img.naturalHeight * 0.5;
 
@@ -88,8 +81,8 @@ export default function FileDetail() {
 
             const dist = Math.sqrt(
                Math.pow(r - color.r, 2) +
-               Math.pow(g - color.g, 2) +
-               Math.pow(b - color.b, 2)
+                  Math.pow(g - color.g, 2) +
+                  Math.pow(b - color.b, 2)
             );
 
             const value = dist <= threshold ? 255 : 0;
@@ -108,28 +101,37 @@ export default function FileDetail() {
          </Typography>
 
          <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-
-            <Grid container spacing={3}>
+            <Grid container spacing={3} justifyContent="center">
                {/* Thumbnail + Picker */}
                <Grid item xs={12} md={5}>
                   <Typography variant="subtitle1" gutterBottom>
                      Thumbnail Preview
                   </Typography>
-                  <ColorPicker thumbnailSrc={thumbnail} onColorPicked={setColor} />
+                  <Box display="flex" justifyContent="center">
+                     <ColorPicker
+                        thumbnailSrc={thumbnail}
+                        onColorPicked={setColor}
+                     />
+                  </Box>
                   {!color && thumbnail && (
-                     <Typography sx={{ mt: 1 }}>
+                     <Typography sx={{ mt: 1, textAlign: "center" }}>
                         🎯 Click the image above to select a color
                      </Typography>
                   )}
                   {color && (
-                     <Box display="flex" alignItems="center" mt={2}>
+                     <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        mt={2}
+                     >
                         <Box
                            sx={{
                               width: 24,
                               height: 24,
-                              borderRadius: '4px',
+                              borderRadius: "4px",
                               backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
-                              border: '1px solid #000',
+                              border: "1px solid #000",
                               mr: 1,
                            }}
                         />
@@ -142,17 +144,23 @@ export default function FileDetail() {
 
                {/* Binarized canvas */}
                <Grid item xs={12} md={5}>
-                  <Typography variant="subtitle1" gutterBottom>
+                  <Typography
+                     variant="subtitle1"
+                     gutterBottom
+                     textAlign="center"
+                  >
                      Binarized Preview
                   </Typography>
-                  <canvas
-                     ref={binarizedCanvasRef}
-                     style={{
-                        border: '1px solid #888',
-                        maxWidth: '100%',
-                        display: 'block',
-                     }}
-                  />
+                  <Box display="flex" justifyContent="center">
+                     <canvas
+                        ref={binarizedCanvasRef}
+                        style={{
+                           border: "1px solid #888",
+                           maxWidth: "100%",
+                           display: "block",
+                        }}
+                     />
+                  </Box>
                </Grid>
             </Grid>
          </Paper>
@@ -170,7 +178,10 @@ export default function FileDetail() {
 
          {/* Message display */}
          {message && (
-            <Alert severity={message.startsWith('❌') ? 'error' : 'info'} sx={{ mb: 3 }}>
+            <Alert
+               severity={message.startsWith("❌") ? "error" : "info"}
+               sx={{ mb: 3 }}
+            >
                {message}
             </Alert>
          )}
