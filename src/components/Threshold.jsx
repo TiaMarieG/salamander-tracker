@@ -1,23 +1,32 @@
-"use client"; // Ensures this component is rendered on the client side in Next.js
+'use client';
+
+import { Box, Typography, Slider } from '@mui/material';
 
 export default function ThresholdInput({ value, onChange }) {
    return (
-      <div style={{ margin: "1rem 0" }}>
-         {/* Label for the slider */}
-         <label htmlFor="threshold">
+      <Box sx={{ mt: 2, mb: 3 }}>
+         {/* Label with current value */}
+         <Typography variant="subtitle1" gutterBottom>
             Threshold: <strong>{value}</strong>
-         </label>
+         </Typography>
 
-         {/* Range slider (0–255) */}
-         <input
+         {/* Material UI Slider */}
+         <Slider
             id="threshold"
-            type="range"
-            min="0"
-            max="255"
             value={value}
             onChange={onChange}
-            style={{ width: "100%", marginTop: "0.5rem" }}
+            min={0}
+            max={255}
+            step={1}
+            aria-label="Threshold"
+            valueLabelDisplay="auto"
+            sx={{ mt: 1 }}
          />
-      </div>
+
+         {/* Optional helper text */}
+         <Typography variant="caption" color="text.secondary">
+        Higher values match more colors. Lower values are more precise.
+      </Typography>
+      </Box>
    );
 }

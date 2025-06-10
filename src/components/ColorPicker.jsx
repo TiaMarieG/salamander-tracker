@@ -44,7 +44,6 @@ export default function ColorPicker({ thumbnailSrc, onColorPicked }) {
 
    return (
       <div>
-         <h3>Select a Color</h3>
          <canvas
             ref={canvasRef}
             onClick={handleClick}
