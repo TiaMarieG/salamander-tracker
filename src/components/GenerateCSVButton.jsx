@@ -32,7 +32,8 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
          const { jobId } = await res.json();
 
          const pollInterval = 2000;
-         const timeout = 60000;
+         // 10 minute timeout 
+         const timeout = 600000;
          const start = Date.now();
 
          const poll = setInterval(async () => {
