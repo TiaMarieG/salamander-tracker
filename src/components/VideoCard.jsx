@@ -17,14 +17,6 @@ export default function VideoCard({ filename }) {
             >
                Preview
             </Button>
-            <Button
-               href={`http://localhost:8080/api/videos/download/${encodeURIComponent(filename)}`}
-               variant="contained"
-               color="primary"
-               target="_blank"
-            >
-               Download
-            </Button>
          </CardActions>
       </Card>
    );
