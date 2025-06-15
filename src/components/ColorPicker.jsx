@@ -2,6 +2,8 @@
 
 import { useRef, useEffect } from "react";
 
+// A color selection tool that renders a thumbnail on a canvas.
+// Users click on a pixel to select its RGB color, which is sent back via onColorPicked.
 export default function ColorPicker({ thumbnailSrc, onColorPicked }) {
    const canvasRef = useRef(null);
    const imgRef = useRef(null);
@@ -13,6 +15,7 @@ export default function ColorPicker({ thumbnailSrc, onColorPicked }) {
 
       if (!img || !canvas) return;
 
+      // Once the image loads, draw it onto the canvas at half size
       img.onload = () => {
          const scale = 0.5;
          const width = img.naturalWidth * scale;
@@ -30,6 +33,7 @@ export default function ColorPicker({ thumbnailSrc, onColorPicked }) {
       }
    }, [thumbnailSrc]);
 
+   // Handle clicks on the canvas to extract RGB color from the clicked pixel
    const handleClick = (e) => {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d", { willReadFrequently: true });

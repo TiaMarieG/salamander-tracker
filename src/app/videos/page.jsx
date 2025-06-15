@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import VideoCard from "@/components/VideoCard";
 import { Typography, Grid, Alert, Container } from "@mui/material";
 
+// VideosPage fetches a list of available videos from the backend and displays them as individual cards.
 export default function VideosPage() {
    const [videos, setVideos] = useState([]);
    const [error, setError] = useState(null);

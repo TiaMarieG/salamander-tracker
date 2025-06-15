@@ -2,6 +2,7 @@
 
 import { Box, Typography, Slider } from "@mui/material";
 
+// Renders a labeled threshold slider for adjusting color-matching sensitivity
 export default function ThresholdInput({ value, onChange }) {
    return (
       <Box sx={{ mt: 2, mb: 3 }}>
@@ -13,7 +14,7 @@ export default function ThresholdInput({ value, onChange }) {
          {/* Material UI Slider */}
          <Slider
             id="threshold"
-            data-cy="threshold-slider" // ← Add this line
+            data-cy="threshold-slider"
             value={value}
             onChange={onChange}
             min={0}
@@ -24,7 +25,7 @@ export default function ThresholdInput({ value, onChange }) {
             sx={{ mt: 1 }}
          />
 
-         {/* Optional helper text */}
+         {/* Helper text */}
          <Typography variant="caption" color="text.secondary">
             Higher values match more colors. Lower values are more precise.
             Please be aware that if the camera is shifted during tracking,

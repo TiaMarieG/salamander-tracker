@@ -2,6 +2,8 @@
 
 import { Typography, Box, Paper, List, ListItem, ListItemText } from '@mui/material';
 
+// This component renders the landing page of the Salamander Tracker application.
+// It explains how to use the app in a step-by-step list inside a styled Paper box.
 export default function HomePage() {
    return (
       <Box mt={4}>

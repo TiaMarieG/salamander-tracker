@@ -11,8 +11,10 @@ import {
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import DownloadIcon from "@mui/icons-material/Download";
 
+// Button that triggers CSV generation for a video file based on a selected color and threshold.
+// Shows loading, success, and error states. Also polls backend for completion.
 export default function GenerateCsvButton({ filename, color, threshold }) {
-   console.log("✅ Rendered CSV button with:", { filename, color, threshold });
+
    const [status, setStatus] = useState("idle"); // idle | waiting | done | error
    const [downloadUrl, setDownloadUrl] = useState(null);
    const [errorMessage, setErrorMessage] = useState("");
@@ -23,6 +25,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
       setErrorMessage("");
 
       try {
+         // Initiate CSV generation on backend
          const res = await fetch("http://localhost:8080/api/generate-csv", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -32,8 +35,9 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
          if (!res.ok) throw new Error(`CSV generation failed (${res.status})`);
          const { jobId } = await res.json();
 
+         // Begin polling job status until it's ready or fails
          const pollInterval = 2000;
-         const timeout = 600000; // 10 minutes
+         const timeout = 600000; // 10 minute timeout
          const start = Date.now();
 
          const poll = setInterval(async () => {
@@ -52,6 +56,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
 
                const data = await pollRes.json();
 
+               // Job finished successfully — set download link
                if (data.status === "done" && data.result) {
                   clearInterval(poll);
                   setStatus("done");
@@ -94,7 +99,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
             alignItems: "center",
          }}
       >
-         {/* Main generate button */}
+         {/* Generate CSV button */}
          <Button
             variant="contained"
             color="success"

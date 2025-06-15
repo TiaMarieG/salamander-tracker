@@ -9,6 +9,9 @@ import ColorPicker from "@/components/ColorPicker";
 import ThresholdInput from "@/components/Threshold";
 import GenerateCsvButton from "@/components/GenerateCsvButton";
 
+// FileDetail shows a detailed preview page for a selected video file.
+// It allows users to pick a color, adjust the threshold, view a binarized version,
+// and generate a CSV file with tracked data.
 export default function FileDetail() {
    const { filename } = useParams();
    const [color, setColor] = useState(null);
@@ -74,6 +77,7 @@ export default function FileDetail() {
          const imageData = ctx.getImageData(0, 0, width, height);
          const data = imageData.data;
 
+         // Loop through each pixel to apply binarization based on distance from selected color
          for (let i = 0; i < data.length; i += 4) {
             const r = data[i];
             const g = data[i + 1];
