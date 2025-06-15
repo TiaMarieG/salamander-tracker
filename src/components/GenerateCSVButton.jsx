@@ -12,6 +12,7 @@ import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import DownloadIcon from "@mui/icons-material/Download";
 
 export default function GenerateCsvButton({ filename, color, threshold }) {
+   console.log("✅ Rendered CSV button with:", { filename, color, threshold });
    const [status, setStatus] = useState("idle"); // idle | waiting | done | error
    const [downloadUrl, setDownloadUrl] = useState(null);
    const [errorMessage, setErrorMessage] = useState("");
@@ -32,8 +33,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
          const { jobId } = await res.json();
 
          const pollInterval = 2000;
-         // 10 minute timeout 
-         const timeout = 600000;
+         const timeout = 600000; // 10 minutes
          const start = Date.now();
 
          const poll = setInterval(async () => {
@@ -102,13 +102,20 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
             onClick={handleGenerate}
             disabled={status === "waiting"}
             startIcon={<RocketLaunchIcon />}
+            data-cy="generate-csv"
          >
             Generate CSV
          </Button>
 
          {/* Waiting status */}
          {status === "waiting" && (
-            <Box mt={2} display="flex" alignItems="center" gap={2}>
+            <Box
+               mt={2}
+               display="flex"
+               alignItems="center"
+               gap={2}
+               data-cy="csv-status"
+            >
                <CircularProgress size={24} />
                <Typography>⏳ Processing request...</Typography>
             </Box>
@@ -116,7 +123,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
 
          {/* Success state */}
          {status === "done" && downloadUrl && (
-            <Box mt={4}>
+            <Box mt={4} data-cy="csv-status">
                <Typography
                   variant="h6"
                   color="success.main"
@@ -132,6 +139,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
                   href={downloadUrl}
                   download
                   size="large"
+                  data-cy="download-csv"
                >
                   Download CSV
                </Button>
@@ -140,7 +148,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
 
          {/* Error state */}
          {status === "error" && (
-            <Typography color="error" mt={3}>
+            <Typography color="error" mt={3} data-cy="csv-status">
                ❌ {errorMessage}
             </Typography>
          )}

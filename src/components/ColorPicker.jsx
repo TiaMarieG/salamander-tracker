@@ -21,6 +21,8 @@ export default function ColorPicker({ thumbnailSrc, onColorPicked }) {
          canvas.width = width;
          canvas.height = height;
          ctx.drawImage(img, 0, 0, width, height);
+
+         canvas.setAttribute('data-ready', 'true');
       };
 
       if (thumbnailSrc) {
@@ -47,6 +49,7 @@ export default function ColorPicker({ thumbnailSrc, onColorPicked }) {
          <canvas
             ref={canvasRef}
             onClick={handleClick}
+            data-cy="color-picker"
             style={{
                cursor: "crosshair",
                border: "1px solid #ccc",

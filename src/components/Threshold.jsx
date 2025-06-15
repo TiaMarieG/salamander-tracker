@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Box, Typography, Slider } from '@mui/material';
+import { Box, Typography, Slider } from "@mui/material";
 
 export default function ThresholdInput({ value, onChange }) {
    return (
@@ -13,6 +13,7 @@ export default function ThresholdInput({ value, onChange }) {
          {/* Material UI Slider */}
          <Slider
             id="threshold"
+            data-cy="threshold-slider" // ← Add this line
             value={value}
             onChange={onChange}
             min={0}
@@ -25,8 +26,10 @@ export default function ThresholdInput({ value, onChange }) {
 
          {/* Optional helper text */}
          <Typography variant="caption" color="text.secondary">
-        Higher values match more colors. Lower values are more precise.
-      </Typography>
+            Higher values match more colors. Lower values are more precise.
+            Please be aware that if the camera is shifted during tracking,
+            tracking results may be affected.
+         </Typography>
       </Box>
    );
 }

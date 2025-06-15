@@ -1,5 +1,11 @@
-import { Card, CardContent, CardActions, Button, Typography } from '@mui/material';
-import Link from 'next/link';
+import {
+   Card,
+   CardContent,
+   CardActions,
+   Button,
+   Typography,
+} from "@mui/material";
+import Link from "next/link";
 
 export default function VideoCard({ filename }) {
    return (
@@ -14,6 +20,7 @@ export default function VideoCard({ filename }) {
                component={Link}
                href={`/videos/preview/${encodeURIComponent(filename)}`}
                variant="outlined"
+               data-cy={`preview-button-${filename}`}
             >
                Preview
             </Button>

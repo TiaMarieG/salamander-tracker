@@ -135,7 +135,7 @@ export default function FileDetail() {
                               mr: 1,
                            }}
                         />
-                        <Typography variant="body1">
+                        <Typography variant="body1" data-cy="selected-color">
                            Selected Color: rgb({color.r}, {color.g}, {color.b})
                         </Typography>
                      </Box>
