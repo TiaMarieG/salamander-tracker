@@ -35,6 +35,7 @@ npm run dev
 # For backend (Express server)
 git clone https://github.com/TiaMarieG/centroid-finder
 cd centroid-finder
+Switch to 'image' branch
 cd server
 npm install
 npm run dev
