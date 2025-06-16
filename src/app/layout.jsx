@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { AppBar, Toolbar, Typography, Button, ThemeProvider, CssBaseline, Container, Box } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
+import '../../styles/global.css';
+
 
 const theme = createTheme({
   palette: {
@@ -38,7 +40,7 @@ export default function RootLayout({ children }) {
             </Box>
 
             {/* Footer at the bottom */}
-            <AppBar position="static" color="primary" sx={{ top: 'auto', bottom: 0 }}>
+            <AppBar position="static" color="primary" id="footer-bar" sx={{ top: 'auto', bottom: 0 }}>
               <Toolbar>
                 <Typography variant="body2" sx={{ flexGrow: 1 }}>
                   © 2025 Salamander Tracker

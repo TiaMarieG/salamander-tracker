@@ -1,23 +1,29 @@
+// page.jsx
+
 "use client";
 
 import { useRef, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-
-import { Box, Typography, Paper, Alert, Container, Grid } from "@mui/material";
+import {
+   Box,
+   Typography,
+   Paper,
+   Alert,
+   Container,
+   Grid
+} from "@mui/material";
 
 import ColorPicker from "@/components/ColorPicker";
 import ThresholdInput from "@/components/Threshold";
 import GenerateCsvButton from "@/components/GenerateCsvButton";
 
-// FileDetail shows a detailed preview page for a selected video file.
-// It allows users to pick a color, adjust the threshold, view a binarized version,
-// and generate a CSV file with tracked data.
 export default function FileDetail() {
    const { filename } = useParams();
    const [color, setColor] = useState(null);
    const [threshold, setThreshold] = useState(128);
    const [thumbnail, setThumbnail] = useState(null);
    const [message, setMessage] = useState("");
+   const [showSalamanders, setShowSalamanders] = useState(false);
 
    const binarizedCanvasRef = useRef(null);
 
@@ -52,12 +58,7 @@ export default function FileDetail() {
 
    // Generate binarized preview
    useEffect(() => {
-      if (
-         !thumbnail ||
-         !color ||
-         isNaN(threshold) ||
-         !binarizedCanvasRef.current
-      )
+      if (!thumbnail || !color || isNaN(threshold) || !binarizedCanvasRef.current)
          return;
 
       const img = new Image();
@@ -77,18 +78,15 @@ export default function FileDetail() {
          const imageData = ctx.getImageData(0, 0, width, height);
          const data = imageData.data;
 
-         // Loop through each pixel to apply binarization based on distance from selected color
          for (let i = 0; i < data.length; i += 4) {
             const r = data[i];
             const g = data[i + 1];
             const b = data[i + 2];
-
             const dist = Math.sqrt(
                Math.pow(r - color.r, 2) +
-                  Math.pow(g - color.g, 2) +
-                  Math.pow(b - color.b, 2)
+               Math.pow(g - color.g, 2) +
+               Math.pow(b - color.b, 2)
             );
-
             const value = dist <= threshold ? 255 : 0;
             data[i] = data[i + 1] = data[i + 2] = value;
             data[i + 3] = 255;
@@ -123,12 +121,7 @@ export default function FileDetail() {
                      </Typography>
                   )}
                   {color && (
-                     <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                        mt={2}
-                     >
+                     <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
                         <Box
                            sx={{
                               width: 24,
@@ -148,11 +141,7 @@ export default function FileDetail() {
 
                {/* Binarized canvas */}
                <Grid item xs={12} md={5}>
-                  <Typography
-                     variant="subtitle1"
-                     gutterBottom
-                     textAlign="center"
-                  >
+                  <Typography variant="subtitle1" gutterBottom textAlign="center">
                      Binarized Preview
                   </Typography>
                   <Box display="flex" justifyContent="center">
@@ -169,7 +158,6 @@ export default function FileDetail() {
             </Grid>
          </Paper>
 
-         {/* Step 2: Threshold */}
          <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
             <Typography variant="h6" gutterBottom>
                Adjust Threshold
@@ -180,7 +168,6 @@ export default function FileDetail() {
             />
          </Paper>
 
-         {/* Message display */}
          {message && (
             <Alert
                severity={message.startsWith("❌") ? "error" : "info"}
@@ -190,13 +177,25 @@ export default function FileDetail() {
             </Alert>
          )}
 
-         {/* Step 4: Generate CSV */}
+         {/* Generate CSV with salamanders */}
          {color && (
             <Box textAlign="center" mt={3}>
                <GenerateCsvButton
                   filename={filename}
                   color={color}
                   threshold={threshold}
+                  onStart={() => setShowSalamanders(true)}
+               />
+               <img
+                  src="/mrsal.png"
+                  alt="Left Salamander"
+                  className={`salamander-img left ${showSalamanders ? "show" : ""}`}
+                  style={{ transform: "scaleX(-1)" }}
+               />
+               <img
+                  src="/mrsal.png"
+                  alt="Right Salamander"
+                  className={`salamander-img right ${showSalamanders ? "show" : ""}`}
                />
             </Box>
          )}
