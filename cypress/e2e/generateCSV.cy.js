@@ -1,7 +1,7 @@
 describe("Full CSV Generation Flow", () => {
    it("navigates to preview and generates CSV after selecting color and threshold", () => {
 
-      cy.intercept('GET', 'http://localhost:8080/videos', {
+      cy.intercept('GET', 'http://localhost:8080/api/videos', {
          statusCode: 200,
          body: ["mock_salamander.mp4"] 
       }).as('getVideos');
