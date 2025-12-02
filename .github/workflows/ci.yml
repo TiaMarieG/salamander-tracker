@@ -1,0 +1,42 @@
+name: Frontend CI
+
+on:
+   push:
+      branches: 
+         - "main"
+         - "dev-branch"
+         - "cont-int-setup"
+   pull_request:
+      branches: 
+         - "main"
+         - "dev-branch"
+
+jobs:
+   cypress-run:
+      runs-on: ubuntu-latest
+
+      steps:
+         - name: Checkout Repository
+           uses: actions/checkout@v4
+
+         - name: Setup Node.js
+           uses: actions/setup-node@v4
+           with:
+              node-version: "lts/*"
+              cache: "npm"
+
+         - name: Install Dependencies
+           run: npm ci
+
+         - name: Run Linting
+           run: npm run lint
+
+         - name: Build Application
+           run: npm run build
+
+         - name: Cypress Run
+           uses: cypress-io/github-action@v6
+           with:
+              start: npm start
+              wait-on: "http://localhost:3000"
+              wait-on-timeout: 120
