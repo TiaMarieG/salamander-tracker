@@ -6,8 +6,14 @@ describe("Full CSV Generation Flow", () => {
          body: ["mock_salamander.mp4"] 
       }).as('getVideos');
 
-      cy.intercept('GET', 'http://localhost:8080/thumbnail/mock_salamander.mp4', (req) => {
-         req.redirect('http://localhost:3000/mrsal.png'); 
+      const base64Image = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+      
+      const blob = Cypress.Blob.base64StringToBlob(base64Image, 'image/png');
+
+      cy.intercept('GET', 'http://localhost:8080/thumbnail/mock_salamander.mp4', {
+         statusCode: 200,
+         headers: { 'content-type': 'image/png' },
+         body: blob, 
       }).as('getThumbnail');
 
       cy.intercept('POST', 'http://localhost:8080/api/generate-csv', {
