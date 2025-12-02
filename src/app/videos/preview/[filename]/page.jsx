@@ -15,7 +15,7 @@ import {
 
 import ColorPicker from "@/components/ColorPicker";
 import ThresholdInput from "@/components/Threshold";
-import GenerateCsvButton from "@/components/GenerateCsvButton";
+import GenerateCsvButton from "@/components/GenerateCSVButton";
 
 export default function FileDetail() {
    const { filename } = useParams();
