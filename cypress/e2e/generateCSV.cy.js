@@ -6,8 +6,8 @@ describe("Full CSV Generation Flow", () => {
          body: ["mock_salamander.mp4"] 
       }).as('getVideos');
 
-      cy.intercept('GET', 'http://localhost:8080/thumbnail/mock_salamander.mp4', {
-         fixture: 'example.json'
+      cy.intercept('GET', 'http://localhost:8080/thumbnail/mock_salamander.mp4', (req) => {
+         req.redirect('http://localhost:3000/mrsal.png'); 
       }).as('getThumbnail');
 
       cy.intercept('POST', 'http://localhost:8080/api/generate-csv', {
