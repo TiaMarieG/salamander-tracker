@@ -5,6 +5,7 @@ on:
       branches: 
          - "main"
          - "dev-branch"
+         - "cont-dep"
    pull_request:
       branches: 
          - "main"
