@@ -26,7 +26,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
 
       try {
          // Initiate CSV generation on backend
-         const res = await fetch("http://localhost:8080/api/generate-csv", {
+         const res = await fetch("http://64.23.238.198:8080/api/generate-csv", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ filename, color, threshold }),
@@ -50,7 +50,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
 
             try {
                const pollRes = await fetch(
-                  `http://localhost:8080/process/${jobId}/status`
+                  `http://64.23.238.198:8080/process/${jobId}/status`
                );
                if (!pollRes.ok) throw new Error("Polling failed");
 
@@ -63,7 +63,7 @@ export default function GenerateCsvButton({ filename, color, threshold }) {
                   setDownloadUrl(
                      data.result.startsWith("http")
                         ? data.result
-                        : `http://localhost:8080${data.result}`
+                        : `http://64.23.238.198:8080${data.result}`
                   );
                } else if (data.status === "error") {
                   clearInterval(poll);

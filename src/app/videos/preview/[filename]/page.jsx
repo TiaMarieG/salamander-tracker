@@ -35,7 +35,7 @@ export default function FileDetail() {
       setMessage("🔄 Loading thumbnail...");
       setColor(null);
 
-      fetch(`http://localhost:8080/thumbnail/${filename}`, {
+      fetch(`http://64.23.238.198:8080/thumbnail/${filename}`, {
          signal: controller.signal,
       })
          .then((res) => {

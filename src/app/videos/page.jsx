@@ -10,7 +10,7 @@ export default function VideosPage() {
    const [error, setError] = useState(null);
 
    useEffect(() => {
-      fetch("http://localhost:8080/api/videos")
+      fetch("http://64.23.238.198:8080/api/videos")
          .then((res) => {
             if (!res.ok) throw new Error("Failed to fetch videos");
             return res.json();

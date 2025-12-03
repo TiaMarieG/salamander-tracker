@@ -1,7 +1,7 @@
 describe('Video Preview Navigation', () => {
   it('clicks Preview on a video and navigates to the preview page', () => {
 
-    cy.intercept('GET', 'http://localhost:8080/api/videos', {
+    cy.intercept('GET', 'http://64.23.238.198:8080/api/videos', {
         statusCode: 200,
         body: ["mock_salamander.mp4"]
     }).as('getVideos');
